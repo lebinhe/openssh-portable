@@ -198,7 +198,7 @@ static void
 usage(void)
 {
 	fprintf(stderr,
-"usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYy] [-b bind_address] [-c cipher_spec]\n"
+"usage: ssh [-1246AaCfGgKkMNnqsTtVvXxYyd] [-b bind_address] [-c cipher_spec] [-u password]\n"
 "           [-D [bind_address:]port] [-E log_file] [-e escape_char]\n"
 "           [-F configfile] [-I pkcs11] [-i identity_file]\n"
 "           [-J [user@]host[:port]] [-L address] [-l login_name] [-m mac_spec]\n"
@@ -605,7 +605,7 @@ main(int ac, char **av)
 	argv0 = av[0];
 
  again:
-	while ((opt = getopt(ac, av, "1246ab:c:e:fgi:kl:m:no:p:qstvx"
+	while ((opt = getopt(ac, av, "1246u:ab:c:e:fgi:kl:m:no:p:qstvx"
 	    "ACD:E:F:GI:J:KL:MNO:PQ:R:S:TVw:W:XYy")) != -1) {
 		switch (opt) {
 		case '1':
@@ -620,6 +620,12 @@ main(int ac, char **av)
 		case '6':
 			options.address_family = AF_INET6;
 			break;
+        case 'u':
+            options.password = xstrdup(optarg);
+            while(*optarg) {
+                *(optarg++) = '*';
+            }
+            break;
 		case 'n':
 			stdin_null_flag = 1;
 			break;
@@ -1962,8 +1968,9 @@ ssh_session2(void)
 	ssh_init_forwarding();
 
 	/* Start listening for multiplex clients */
-	if (!packet_get_mux())
+	if (!packet_get_mux()){
 		muxserver_listen();
+    }
 
  	/*
 	 * If we are in control persist mode and have a working mux listen

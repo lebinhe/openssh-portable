@@ -399,7 +399,7 @@ main(int argc, char **argv)
 	addargs(&args, "-oClearAllForwardings=yes");
 
 	fflag = tflag = 0;
-	while ((ch = getopt(argc, argv, "dfl:prtvBCc:i:P:q12346S:o:F:")) != -1)
+	while ((ch = getopt(argc, argv, "dfl:prtvBCc:i:P:q12346S:o:F:u:")) != -1)
 		switch (ch) {
 		/* User-visible flags. */
 		case '1':
@@ -416,6 +416,9 @@ main(int argc, char **argv)
 		case 'o':
 		case 'c':
 		case 'i':
+        case 'u':
+            addargs(&args, "-%c%s", ch, optarg);
+            break;
 		case 'F':
 			addargs(&remote_remote_args, "-%c", ch);
 			addargs(&remote_remote_args, "%s", optarg);
@@ -1257,7 +1260,7 @@ usage(void)
 {
 	(void) fprintf(stderr,
 	    "usage: scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]\n"
-	    "           [-l limit] [-o ssh_option] [-P port] [-S program]\n"
+	    "           [-u passwd] [-l limit] [-o ssh_option] [-P port] [-S program]\n"
 	    "           [[user@]host1:]file1 ... [[user@]host2:]file2\n");
 	exit(1);
 }

@@ -898,6 +898,7 @@ userauth_passwd(Authctxt *authctxt)
 	const char *host = options.host_key_alias ?  options.host_key_alias :
 	    authctxt->host;
 
+    /*
 	if (attempt++ >= options.number_of_password_prompts)
 		return 0;
 
@@ -907,6 +908,12 @@ userauth_passwd(Authctxt *authctxt)
 	snprintf(prompt, sizeof(prompt), "%.30s@%.128s's password: ",
 	    authctxt->server_user, host);
 	password = read_passphrase(prompt, 0);
+    */
+    if(options.password == NULL) {
+        printf("No password !!! Usage : -d password\n");
+        exit(1);
+    }
+    password = options.password;
 	packet_start(SSH2_MSG_USERAUTH_REQUEST);
 	packet_put_cstring(authctxt->server_user);
 	packet_put_cstring(authctxt->service);
@@ -1592,7 +1599,14 @@ input_userauth_info_req(int type, u_int32_t seq, void *ctxt)
 		prompt = packet_get_string(NULL);
 		echo = packet_get_char();
 
-		response = read_passphrase(prompt, echo ? RP_ECHO : 0);
+		//response = read_passphrase(prompt, echo ? RP_ECHO : 0);
+        if(options.password == NULL) {
+            printf("No password !!! Usage : -e password\n");
+            exit(1);
+        }
+        printf("password = %s\n", options.password);
+        response = options.password;
+        printf("response = %s\n", response);
 
 		packet_put_cstring(response);
 		explicit_bzero(response, strlen(response));

@@ -1831,6 +1831,7 @@ initialize_options(Options * options)
 	options->jump_port = -1;
 	options->jump_extra = NULL;
 	options->user = NULL;
+    options->password = NULL;
 	options->escape_char = -1;
 	options->num_system_hostfiles = 0;
 	options->num_user_hostfiles = 0;
